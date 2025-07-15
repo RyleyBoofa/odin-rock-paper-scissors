@@ -16,10 +16,7 @@ function getComputerChoice() {
 }
 
 function getHumanChoice() {
-    let choice = prompt("Type 'Rock', 'Paper', or 'Scissors'", "Rock");
-    if (!choice) {
-        choice = "rock";
-    }    
+    let choice = prompt("Type 'Rock', 'Paper', or 'Scissors'", "Rock") || "rock";  
     switch (choice.toLowerCase()) {
         case "rock":
             return "rock";
