@@ -1,11 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rock Paper Scissors</title>
-    <script type="module" src="./script.js"></script>
-</head>
-<body>
-    <h1>Access the developer console to play the game!</h1>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Rock Paper Scissors</title>
+        <link rel="stylesheet" href="./src/styles.css" />
+        <script type="module" src="./src/script.js"></script>
+    </head>
+    <body>
+        <div class="page-container">
+            <div class="header-container">
+                <div class="header">
+                    <h1 class="bold-centered">Rock Paper Scissors</h1>
+                </div>
+            </div>
+            <div class="game-container">
+                <div class="game-header-container">
+                    <div class="game-header">
+                        <h2 class="bold-centered">Choose your weapon!</h2>
+                    </div>
+                </div>
+                <div class="game-inner-container">
+                    <div class="player-container human-container">
+                        <div class="player-header">
+                            <h3 class="bold-centered">PLAYER</h3>
+                            <div class="options-container">
+                                <div class="option-box selectable">
+                                    &#129704;
+                                </div>
+                                <div class="option-box selectable">
+                                    &#128196;
+                                </div>
+                                <div class="option-box selectable">&#9986;</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-container">
+                        <div class="score-header">
+                            <h3 class="bold-centered">SCORE</h3>
+                            <div class="options-container">
+                                <div class="option-box winner">
+                                    &#x2B05;&#xFE0F;
+                                </div>
+                                <div class="option-box loser">
+                                    &#x27A1;&#xFE0F;
+                                </div>
+                                <div class="option-box tie">&#x1F504;</div>
+                                <div class="option-box loser">
+                                    &#x27A1;&#xFE0F;
+                                </div>
+                                <div class="option-box winner">
+                                    &#x2B05;&#xFE0F;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="player-container computer-container">
+                        <div class="computer-header">
+                            <h3 class="bold-centered">COMPUTER</h3>
+                            <div class="options-container">
+                                <div class="option-box">&#129704;</div>
+                                <div class="option-box">&#128196;</div>
+                                <div class="option-box">&#9986;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
