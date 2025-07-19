@@ -1,38 +1,33 @@
-/*
-Console-based rock-paper-scissors game -- The Odin Project: Project: Rock Paper Scissors
-*/
+// The Odin Project: Rock Paper Scissors
 
-// playGame();
-
-const WINNER_ENTITY = "&#x2B05;&#xFE0F;"; // left-arrow emoji
-const LOSER_ENTITY = "&#x27A1;&#xFE0F;"; // right-arrow emoji
+const WIN_ENTITY = "&#x2B05;&#xFE0F;"; // left-arrow emoji
+const LOSS_ENTITY = "&#x27A1;&#xFE0F;"; // right-arrow emoji
 const TIE_ENTITY = "&#x1F504;"; // anti-clockwise-arrows emoji
+const MAX_ROUND_COUNT = 5;
 
 let humanScore = 0;
 let computerScore = 0;
 let roundCount = 0;
 
+const gameHeader = document.querySelector(".game-header h2");
+const playerOptions = document.querySelector(".human-container .options-container");
+const nextRound = document.querySelector(".next-round-container");
+nextRound.querySelector("button").addEventListener("click", playRoundRecursive);
+const reset = document.querySelector(".reset-container");
+reset.querySelector("button").addEventListener("click", resetGame);
+
 resetGame();
 
 function resetGame() {
     const resultBoxes = document.querySelectorAll(".results-container .options-container div");
-    Array.from(resultBoxes).forEach((box) => {
-        box.classList.remove("winner");
-        box.classList.remove("loser");
+    resultBoxes.forEach((box) => {
+        box.classList.remove("win");
+        box.classList.remove("loss");
         box.classList.remove("tie");
         box.textContent = "";
     });
 
-    const selectedOptions = document.querySelectorAll(".selected");
-    Array.from(selectedOptions).forEach((box) => {
-        box.classList.remove("selected");
-    });
-
-    const gameHeader = document.querySelector(".game-header h2");
-    gameHeader.textContent = "Choose your weapon!";
-
-    const resetButton = document.querySelector(".reset-container");
-    resetButton.style.display = "none";
+    reset.style.display = "none";
 
     humanScore = 0;
     computerScore = 0;
@@ -42,21 +37,36 @@ function resetGame() {
 }
 
 function playRoundRecursive() {
-    if (roundCount >= 5) {
-        // game over, determine winner
+    resetRound();
+
+    if (roundCount >= MAX_ROUND_COUNT) {
+        displayGameResult();
     } else {
         roundCount++;
         awaitPlayerChoice();
     }
 }
 
-function awaitPlayerChoice() {
-    const playerOptions = document.querySelector(".human-container .options-container");
-    playerOptions.addEventListener("click", (e) => {
-        const targetOption = e.target;
-        targetOption.classList.add("selected");
-        generateComputerChoice();
+function resetRound() {
+    const selectedOptions = document.querySelectorAll(".selected");
+    selectedOptions.forEach((box) => {
+        box.classList.remove("selected");
     });
+
+    gameHeader.textContent = "Choose your weapon!";
+
+    nextRound.style.display = "none";
+}
+
+function awaitPlayerChoice() {
+    playerOptions.addEventListener("click", selectPlayerChoice);
+}
+
+function selectPlayerChoice(event) {
+    const targetOption = event.target;
+    targetOption.classList.add("selected");
+    playerOptions.removeEventListener("click", selectPlayerChoice);
+    generateComputerChoice();
 }
 
 function generateComputerChoice() {
@@ -82,43 +92,44 @@ function generateComputerChoice() {
 }
 
 function determineRoundResult() {
-    const playerSelection = document
-        .querySelector(".human-container .options-container .selected")
-        .id.split("-")[1];
-    const computerSelection = document
-        .querySelector(".computer-container .options-container .selected")
-        .id.split("-")[1];
+    // capitalized string representation of each coice from the choice's id (e.g. player-rock = Rock)
+    const playerSelection = capitalize(
+        document.querySelector(".human-container .options-container .selected").id.split("-")[1]
+    );
+    const computerSelection = capitalize(
+        document.querySelector(".computer-container .options-container .selected").id.split("-")[1]
+    );
     let result;
 
     switch (playerSelection) {
-        case "rock":
-            if (computerSelection === "rock") {
+        case "Rock":
+            if (computerSelection === "Rock") {
                 result = 0;
-            } else if (computerSelection === "paper") {
+            } else if (computerSelection === "Paper") {
                 result = -1;
-            } else if (computerSelection === "scissors") {
+            } else if (computerSelection === "Scissors") {
                 result = 1;
             } else {
                 result = undefined;
             }
             break;
-        case "paper":
-            if (computerSelection === "rock") {
+        case "Paper":
+            if (computerSelection === "Rock") {
                 result = 1;
-            } else if (computerSelection === "paper") {
+            } else if (computerSelection === "Paper") {
                 result = 0;
-            } else if (computerSelection === "scissors") {
+            } else if (computerSelection === "Scissors") {
                 result = -1;
             } else {
                 result = undefined;
             }
             break;
-        case "scissors":
-            if (computerSelection === "rock") {
+        case "Scissors":
+            if (computerSelection === "Rock") {
                 result = -1;
-            } else if (computerSelection === "paper") {
+            } else if (computerSelection === "Paper") {
                 result = 1;
-            } else if (computerSelection === "scissors") {
+            } else if (computerSelection === "Scissors") {
                 result = 0;
             } else {
                 result = undefined;
@@ -128,15 +139,25 @@ function determineRoundResult() {
             result = undefined;
     }
 
+    const targetResult = document.querySelector(`#game${roundCount}`);
+
     switch (result) {
         case 0:
-            // tie
+            targetResult.innerHTML = TIE_ENTITY;
+            targetResult.classList.add("tie");
+            gameHeader.textContent = `Tie! You both chose ${playerSelection}`;
             break;
         case 1:
-            // player wins
+            targetResult.innerHTML = WIN_ENTITY;
+            targetResult.classList.add("win");
+            gameHeader.textContent = `Win! ${playerSelection} beats ${computerSelection}`;
+            humanScore++;
             break;
         case -1:
-            // computer wins
+            targetResult.innerHTML = LOSS_ENTITY;
+            targetResult.classList.add("loss");
+            gameHeader.textContent = `Loss! ${computerSelection} beats ${playerSelection}`;
+            computerScore++;
             break;
         default:
             console.log("ERROR: resetting game...");
@@ -144,114 +165,23 @@ function determineRoundResult() {
             break;
     }
 
-    // playRoundRecursive();
-}
-
-function getComputerChoice() {
-    switch (Math.floor(Math.random() * 3)) {
-        case 0:
-            return "rock";
-        case 1:
-            return "paper";
-        case 2:
-            return "scissors";
-    }
-}
-
-function getHumanChoice() {
-    let choice = prompt("Type 'Rock', 'Paper', or 'Scissors'", "Rock") || "rock";
-    switch (choice.toLowerCase()) {
-        case "rock":
-            return "rock";
-        case "paper":
-            return "paper";
-        case "scissors":
-            return "scissors";
-        default:
-            return "rock";
-    }
-}
-
-function playRound(humanChoice, computerChoice) {
-    switch (humanChoice) {
-        case "rock":
-            if (computerChoice === "rock") {
-                console.log(`IT'S A TIE! You both chose ${capitalize(humanChoice)}`);
-                return 0;
-            } else if (computerChoice === "paper") {
-                console.log(
-                    `YOU LOSE! ${capitalize(computerChoice)} beats ${capitalize(humanChoice)}`
-                );
-                return -1;
-            } else if (computerChoice === "scissors") {
-                console.log(
-                    `YOU WIN! ${capitalize(humanChoice)} beats ${capitalize(computerChoice)}`
-                );
-                return 1;
-            }
-            break;
-        case "paper":
-            if (computerChoice === "rock") {
-                console.log(
-                    `YOU WIN! ${capitalize(humanChoice)} beats ${capitalize(computerChoice)}`
-                );
-                return 1;
-            } else if (computerChoice === "paper") {
-                console.log(`IT'S A TIE! You both chose ${capitalize(humanChoice)}`);
-                return 0;
-            } else if (computerChoice === "scissors") {
-                console.log(
-                    `YOU LOSE! ${capitalize(computerChoice)} beats ${capitalize(humanChoice)}`
-                );
-                return -1;
-            }
-            break;
-        case "scissors":
-            if (computerChoice === "rock") {
-                console.log(
-                    `YOU LOSE! ${capitalize(computerChoice)} beats ${capitalize(humanChoice)}`
-                );
-                return -1;
-            } else if (computerChoice === "paper") {
-                console.log(
-                    `YOU WIN! ${capitalize(humanChoice)} beats ${capitalize(computerChoice)}`
-                );
-                return 1;
-            } else if (computerChoice === "scissors") {
-                console.log(`IT'S A TIE! You both chose ${capitalize(humanChoice)}`);
-                return 0;
-            }
-            break;
-        default:
-            console.log("Invalid selection(s). No winner.");
-            return 0;
-    }
-}
-
-function playGame() {
-    let humanScore = 0;
-    let computerScore = 0;
-
-    for (let i = 0; i < 5; i++) {
-        let result = playRound(getHumanChoice(), getComputerChoice());
-        if (result < 0) {
-            computerScore++;
-        } else if (result > 0) {
-            humanScore++;
-        }
-    }
-
-    if (humanScore > computerScore) {
-        console.log(
-            `HUMAN WINS! With a score of ${humanScore}-${computerScore}! GGs, well played!`
-        );
-    } else if (computerScore > humanScore) {
-        console.log(
-            `COMPUTER WINS! With a score of ${computerScore}-${humanScore}! Better luck next time`
-        );
+    if (roundCount < MAX_ROUND_COUNT) {
+        nextRound.style.display = "block";
     } else {
-        console.log(`NO WINNER! The scores tied at ${humanScore}-${computerScore}!`);
+        playRoundRecursive();
     }
+}
+
+function displayGameResult() {
+    if (humanScore > computerScore) {
+        gameHeader.textContent = `You win! ${humanScore}-${computerScore}`;
+    } else if (computerScore > humanScore) {
+        gameHeader.textContent = `You lose! ${humanScore}-${computerScore}`;
+    } else {
+        gameHeader.textContent = `It's a tie! ${humanScore}-${computerScore}`;
+    }
+
+    reset.style.display = "block";
 }
 
 function capitalize(word) {

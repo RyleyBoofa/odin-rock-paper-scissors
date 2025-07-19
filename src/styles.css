@@ -131,8 +131,8 @@ button:hover {
 
 .results-container .option-box {
     font-size: 50px;
-    min-width: 60px;
-    min-height: 60px;
+    min-width: 70px;
+    min-height: 70px;
 }
 
 .selectable:hover {
@@ -145,11 +145,11 @@ button:hover {
     border-width: 4px;
 }
 
-.winner {
+.win {
     border: 5px solid green;
 }
 
-.loser {
+.loss {
     border: 5px solid red;
 }
 
